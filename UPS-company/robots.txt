@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ups-company.com/sitemap.xml
+
+Disallow: /assets/
