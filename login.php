@@ -1,19 +1,16 @@
 <?php
 session_start();
 
-// Настройки подключения к БД
 $host = 'localhost';
 $dbname = 'ups_company';
 $username = 'root';
-$password = '';
+$password = 'root';
 
-// Проверяем, не авторизован ли уже пользователь
 if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
     header('Location: admin_dashboard.php');
     exit();
 }
 
-// Обработка формы авторизации
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input_username = trim($_POST['username'] ?? '');
@@ -23,17 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = 'Введите логин и пароль';
     } else {
         try {
-            // Подключаемся к БД
             $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // Ищем пользователя в базе
             $stmt = $pdo->prepare("SELECT id, username, password FROM admin WHERE username = ?");
             $stmt->execute([$input_username]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user && $input_password == $user['password']) {
-                // Успешная авторизация
                 $_SESSION['admin_logged_in'] = true;
                 $_SESSION['admin_id'] = $user['id'];
                 $_SESSION['admin_username'] = $user['username'];

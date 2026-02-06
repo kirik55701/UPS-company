@@ -1,20 +1,16 @@
 <?php
-// admin_dashboard.php
 session_start();
 
-// Проверка авторизации
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit();
 }
 
-// Настройки подключения к БД
 $host = 'localhost';
 $dbname = 'ups_company';
 $username = 'root';
 $password = '';
 
-// Получаем заказы
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

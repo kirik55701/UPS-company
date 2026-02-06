@@ -101,26 +101,22 @@
 </head>
 <body>
     <?php
-    // Подключение к базе данных
     $host = 'localhost';
-    $dbname = 'ups_company'; // имя вашей базы данных
-    $username = 'root'; // ваш пользователь MySQL
-    $password = ''; // ваш пароль MySQL
+    $dbname = 'ups_company';
+    $username = 'root'; 
+    $password = ''; 
     
-    // Обработка формы
     $errors = [];
     $success = false;
     $order_id = null;
     
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // Получаем данные из формы
         $product = htmlspecialchars($_POST['product'] ?? '');
         $qty = intval($_POST['qty'] ?? 1);
         $name = htmlspecialchars($_POST['name'] ?? '');
         $address = htmlspecialchars($_POST['address'] ?? '');
         $phone = htmlspecialchars($_POST['phone'] ?? '');
         
-        // Простая валидация
         if (empty($product) || $product == '0') {
             $errors[] = "Выберите модель ИБП";
         }
@@ -141,20 +137,16 @@
             $errors[] = "Введите телефон";
         }
         
-        // Если нет ошибок, сохраняем в базу
         if (empty($errors)) {
             try {
-                // Подключаемся к базе данных
                 $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
                 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 
-                // Подготавливаем SQL запрос
                 $sql = "INSERT INTO orders (product, qty, name, address, phone) 
                         VALUES (:product, :qty, :name, :address, :phone)";
                 
                 $stmt = $pdo->prepare($sql);
                 
-                // Выполняем запрос с параметрами
                 $stmt->execute([
                     ':product' => $product,
                     ':qty' => $qty,
@@ -163,14 +155,11 @@
                     ':phone' => $phone
                 ]);
                 
-                // Получаем ID нового заказа
                 $order_id = $pdo->lastInsertId();
                 $success = true;
                 
             } catch (PDOException $e) {
                 $errors[] = "Ошибка при сохранении заказа. Пожалуйста, попробуйте позже.";
-                // Для отладки можно раскомментировать:
-                // $errors[] = $e->getMessage();
             }
         }
     }
@@ -243,7 +232,6 @@
                     <?php endif; ?>
                     
                     <form method="POST" action="">
-                        <!-- 1) Выпадающий список с доступными ИБП -->
                         <div class="mb-4">
                             <label class="form-label" for="product">Выберите модель ИБП *</label>
                             <select class="form-select" id="product" name="product" required>
@@ -258,7 +246,6 @@
                             <div class="form-text">Выберите модель из списка доступных ИБП</div>
                         </div>
                         
-                        <!-- 2) Кол-во штук -->
                         <div class="mb-4">
                             <label class="form-label" for="qty">Количество, шт. *</label>
                             <input type="number" class="form-control" id="qty" name="qty" 
@@ -266,7 +253,6 @@
                             <div class="form-text">Минимум 1, максимум 100 штук</div>
                         </div>
                         
-                        <!-- 3) Поле ФИО Заказчика -->
                         <div class="mb-4">
                             <label class="form-label" for="name">ФИО Заказчика *</label>
                             <input type="text" class="form-control" id="name" name="name" 
@@ -274,7 +260,6 @@
                             <div class="form-text">Введите полное имя</div>
                         </div>
                         
-                        <!-- 4) Адрес доставки -->
                         <div class="mb-4">
                             <label class="form-label" for="address">Адрес доставки *</label>
                             <textarea class="form-control" id="address" name="address" 
@@ -282,7 +267,6 @@
                             <div class="form-text">Укажите полный адрес для доставки</div>
                         </div>
                         
-                        <!-- 5) Телефон -->
                         <div class="mb-4">
                             <label class="form-label" for="phone">Телефон *</label>
                             <input type="tel" class="form-control" id="phone" name="phone" 
@@ -383,7 +367,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Простая валидация на стороне клиента
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form');
             if (form) {
@@ -408,7 +391,6 @@
                 });
             }
             
-            // Автозаполнение телефона
             const phoneInput = document.getElementById('phone');
             if (phoneInput) {
                 phoneInput.addEventListener('input', function(e) {
